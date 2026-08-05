@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Para Katerin 💜</title>
+<style>
+  :root{
+    --bg-deep:#0a0413;
+    --bg-mid:#170a29;
+    --bg-alt:#1f0e35;
+    --purple-1:#7b2ff7;
+    --purple-2:#a855f7;
+    --lilac:#c9a8ff;
+    --neon:#e879f9;
+    --neon-glow:#d946ef;
+    --text-soft:#f3e8ff;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    height:100%;
+    width:100%;
+    font-family:'Segoe UI', Arial, sans-serif;
+    overflow:hidden;
+    color:var(--text-soft);
+  }
+
+  body{
+    position:relative;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(168,85,247,0.28), transparent 42%),
+      radial-gradient(circle at 85% 20%, rgba(217,70,239,0.22), transparent 48%),
+      radial-gradient(circle at 50% 100%, rgba(123,47,247,0.28), transparent 55%),
+      linear-gradient(160deg, var(--bg-deep), var(--bg-mid) 55%, var(--bg-alt) 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ---------- Destellos / luces suaves de fondo ---------- */
+  .glow{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(70px);
+    pointer-events:none;
+    z-index:0;
+    opacity:.55;
+    animation:glowMove 14s ease-in-out infinite;
+  }
+  .glow-1{ width:340px; height:340px; background:var(--purple-1); top:-80px; left:-80px; }
+  .glow-2{ width:300px; height:300px; background:var(--neon-glow); bottom:-100px; right:-60px; animation-delay:3s; }
+  .glow-3{ width:260px; height:260px; background:var(--purple-2); top:40%; left:60%; animation-delay:6s; }
+  @keyframes glowMove{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(30px,-20px) scale(1.15); }
+  }
+
+  /* ---------- Elementos decorativos flotantes (corazones / flores) ---------- */
+  .decor-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:1;
+  }
+  .decor{
+    position:absolute;
+    bottom:-60px;
+    opacity:0;
+    color:var(--neon);
+    filter:drop-shadow(0 0 8px var(--neon-glow));
+    animation:driftUp linear infinite;
+  }
+  @keyframes driftUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg) scale(.8); opacity:0; }
+    10%{ opacity:.55; }
+    50%{ transform:translateY(-55vh) translateX(18px) rotate(90deg) scale(1); }
+    90%{ opacity:.45; }
+    100%{ transform:translateY(-115vh) translateX(-14px) rotate(180deg) scale(.85); opacity:0; }
+  }
+
+  /* ---------- Canvas de particulas (base del usuario) ---------- */
+  .canvas-frame{
+    position:relative;
+    z-index:2;
+    border-radius:22px;
+    padding:14px;
+    background:rgba(24,10,41,0.35);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(216,170,255,0.18);
+    box-shadow:0 0 60px rgba(168,85,247,0.22);
+  }
+  #particleCanvas{
+    display:block;
+    cursor:pointer;
+    max-width:82vw;
+    max-height:72vh;
+    object-fit:contain;
+    border-radius:14px;
+  }
+
+  /* ---------- Loader ---------- */
+  #loader{
+    position:fixed;
+    inset:0;
+    z-index:80;
+    background:var(--bg-deep);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    transition:opacity .8s ease;
+  }
+  #loader.hide{ opacity:0; pointer-events:none; }
+  .loader-heart{
+    font-size:2.2rem;
+    animation:beat 1.2s ease-in-out infinite;
+    filter:drop-shadow(0 0 14px var(--neon-glow));
+  }
+  @keyframes beat{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.25);}
+  }
+  .loader-text{
+    font-size:.82rem;
+    color:var(--lilac);
+    letter-spacing:.5px;
+  }
+
+  /* ---------- Contador de tiempo ---------- */
+  .counter-panel{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:10;
+    display:flex;
+    gap:10px;
+    padding:14px 20px;
+    border-radius:18px;
+    background:rgba(24,10,41,0.45);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(216,170,255,0.25);
+    box-shadow:0 0 30px rgba(168,85,247,0.2);
+    text-align:center;
+  }
+  .counter-title{
+    position:absolute;
+    top:-11px;
+    left:50%;
+    transform:translateX(-50%);
+    background:linear-gradient(90deg, var(--purple-1), var(--neon-glow));
+    padding:2px 14px;
+    border-radius:10px;
+    font-size:.63rem;
+    letter-spacing:.5px;
+    white-space:nowrap;
+    box-shadow:0 0 12px rgba(217,70,239,0.5);
+  }
+  .time-block{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-width:44px;
+  }
+  .time-value{
+    font-size:1.25rem;
+    font-weight:700;
+    color:var(--text-soft);
+    text-shadow:0 0 10px var(--neon-glow);
+  }
+  .time-label{
+    font-size:.58rem;
+    color:#b79ee0;
+    letter-spacing:.4px;
+    margin-top:2px;
+  }
+  .time-sep{
+    font-size:1.15rem;
+    color:var(--purple-2);
+    align-self:center;
+    padding-bottom:14px;
+  }
+
+  /* ---------- Carta de amor / typewriter ---------- */
+  .love-letter{
+    position:fixed;
+    bottom:24px;
+    left:24px;
+    z-index:10;
+    width:min(370px, 78vw);
+    padding:18px 20px;
+    border-radius:18px;
+    background:rgba(24,10,41,0.5);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(216,170,255,0.22);
+    box-shadow:0 0 30px rgba(168,85,247,0.18);
+  }
+  .love-letter h3{
+    font-size:.76rem;
+    color:var(--neon);
+    letter-spacing:.5px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .love-letter p{
+    font-size:.9rem;
+    line-height:1.55;
+    color:var(--text-soft);
+    min-height:110px;
+  }
+  .cursor{
+    display:inline-block;
+    width:2px;
+    height:1em;
+    background:var(--neon);
+    margin-left:2px;
+    vertical-align:middle;
+    animation:blink 0.9s step-start infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ---------- Reproductor de música ---------- */
+  .music-btn{
+    position:fixed;
+    bottom:28px;
+    right:28px;
+    z-index:12;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    background:linear-gradient(135deg, var(--purple-1), var(--neon-glow));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 20px rgba(217,70,239,0.4);
+    transition:transform .2s ease;
+  }
+  .music-btn:hover{ transform:scale(1.08); }
+  .music-btn svg{ width:26px; height:26px; fill:#fff; }
+  .music-btn.playing{ animation:pulseNeon 1.4s ease-in-out infinite; }
+  @keyframes pulseNeon{
+    0%,100%{ box-shadow:0 0 16px rgba(217,70,239,0.4), 0 0 0 0 rgba(217,70,239,0.5); }
+    50%{ box-shadow:0 0 30px rgba(217,70,239,0.75), 0 0 0 14px rgba(217,70,239,0); }
+  }
+
+  /* ---------- Burbujas de fotos ---------- */
+  .photo-bubble{
+    position:fixed;
+    z-index:8;
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background-size:cover;
+    background-position:center;
+    background-color:#2a1444;
+    border:2px solid rgba(232,121,249,0.55);
+    box-shadow:0 0 18px rgba(168,85,247,0.35);
+    cursor:pointer;
+    transition:transform .25s ease, box-shadow .25s ease;
+    animation:floatBubble 6s ease-in-out infinite;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+  }
+  .photo-bubble:hover{
+    transform:scale(1.12);
+    box-shadow:0 0 28px rgba(232,121,249,0.7);
+  }
+  @keyframes floatBubble{
+    0%,100%{ transform:translateY(0px); }
+    50%{ transform:translateY(-16px); }
+  }
+  .bubble-1{ top:10%; left:4%; animation-duration:7s; }
+  .bubble-2{ top:15%; right:5%; animation-duration:8s; animation-delay:.4s; }
+  .bubble-3{ top:32%; left:4%; animation-duration:6.5s; animation-delay:.8s; }
+  .bubble-4{ top:50%; right:3%; animation-duration:7.5s; animation-delay:1.2s; width:100px; height:100px; }
+
+  /* ---------- Modal de foto con dedicatoria ---------- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:60;
+    background:rgba(8,3,16,0.85);
+    backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
+    padding:20px;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:all; }
+  .modal-box{
+    position:relative;
+    width:min(420px, 90vw);
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid rgba(216,170,255,0.3);
+    box-shadow:0 0 50px rgba(168,85,247,0.4);
+    background:rgba(24,10,41,0.9);
+    transform:scale(.9);
+    transition:transform .3s ease;
+  }
+  .modal-overlay.open .modal-box{ transform:scale(1); }
+  .modal-box img{
+    display:block;
+    width:100%;
+    max-height:52vh;
+    object-fit:cover;
+  }
+  .modal-dedication{
+    padding:18px 22px 22px;
+    text-align:center;
+  }
+  .modal-dedication p{
+    font-size:.95rem;
+    font-style:italic;
+    line-height:1.5;
+    color:var(--lilac);
+  }
+  .modal-dedication span{
+    display:block;
+    margin-top:8px;
+    font-size:.75rem;
+    color:var(--neon);
+    letter-spacing:.5px;
+  }
+  .modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:none;
+    background:rgba(24,10,41,0.75);
+    color:var(--text-soft);
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 12px rgba(217,70,239,0.4);
+    transition:transform .2s ease;
+    z-index:2;
+  }
+  .modal-close:hover{ transform:scale(1.1) rotate(90deg); }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width:640px){
+    .counter-panel{ gap:6px; padding:12px 14px; }
+    .time-value{ font-size:1rem; }
+    .time-label{ font-size:.5rem; }
+    .love-letter{ left:12px; bottom:100px; width:calc(100vw - 24px); }
+    .music-btn{ width:54px; height:54px; bottom:20px; right:16px; }
+    .photo-bubble{ width:50px; height:50px; }
+    .bubble-4{ display:none; }
+    #particleCanvas{ max-width:90vw; max-height:56vh; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-heart">💜</div>
+    <div class="loader-text">Preparando cada partícula con amor...</div>
+  </div>
+
+  <!-- Luces / destellos -->
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+
+  <!-- Decoración flotante generada por JS -->
+  <div class="decor-layer" id="decorLayer"></div>
+
+  <!-- Canvas de dispersión de partículas -->
+  <div class="canvas-frame">
+    <canvas id="particleCanvas"></canvas>
+  </div>
+
+  <!-- Contador de tiempo -->
+  <div class="counter-panel">
+    <div class="counter-title">Juntos desde el 18/11/2025</div>
+    <div class="time-block"><span class="time-value" id="tDays">00</span><span class="time-label">días</span></div>
+    <div class="time-sep">:</div>
+    <div class="time-block"><span class="time-value" id="tHours">00</span><span class="time-label">horas</span></div>
+    <div class="time-sep">:</div>
+    <div class="time-block"><span class="time-value" id="tMinutes">00</span><span class="time-label">min</span></div>
+    <div class="time-sep">:</div>
+    <div class="time-block"><span class="time-value" id="tSeconds">00</span><span class="time-label">seg</span></div>
+  </div>
+
+  <!-- Carta de amor -->
+  <div class="love-letter">
+    <h3>Para Katerin</h3>
+    <p id="letterText"><span class="cursor"></span></p>
+  </div>
+
+  <!-- Reproductor de música -->
+  <button class="music-btn" id="musicBtn" aria-label="Reproducir música">
+    <svg id="musicIconPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    <svg id="musicIconPause" viewBox="0 0 24 24" style="display:none;"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+  </button>
+  <audio id="bgMusic" src="musica.mp3" loop preload="none"></audio>
+
+  <!-- Burbujas de fotos (usa imágenes locales: coloca los archivos junto a este HTML) -->
+  <div class="photo-bubble bubble-1" data-full="image_1.png"
+       data-dedication="Katerin, disfruto cada momento jugando contigo a Roblox, ya sea en cualquier juego random que encontremos o en especial en el hospital de animales que tanto te gusta. Pero para mí, lo que hace especial cada partida es que tú estás en ella. Sé que este detalle llega un poquito tarde por el Día de la Novia, ¡pero no necesito una fecha para recordarte lo mucho que te amo!"></div>
+  <div class="photo-bubble bubble-2" data-full="image_2.jpg"
+       data-dedication="Recuerdo que esto fue de lo primero que hice para ti, mi amor. Tal vez no sea lo más perfecto ni lo más elaborado, pero fue súper especial hacerlo pensando en ti. Espero que algún día estas fotos separadas se conviertan en una foto de los dos juntitos... y con nuestro hijo que te haré pronto, jajaja. Te amo muchísimo, Kate."></div>
+  <div class="photo-bubble bubble-3" data-full="image_3.jpg"
+       data-dedication="La verdad soy malísimo en este juego y casi ni me gusta por eso... pero por el simple hecho de que tú estés ahí, de que seas súper buena y me carrees siempre, acepto jugarlo con una sonrisa. Gracias por nunca aburrirte de mí a pesar de lo malo que soy en free. Te amo."></div>
+  <div class="photo-bubble bubble-4" data-full="image_4.jpg"
+       data-dedication="Aquí empezó todo, en este servidor del que ya ni me acuerdo el nombre, xd. Nuestro primer rincón juntos y el inicio de todo... Fue aquí donde te conocí, donde nunca te volví a dejar y donde anduve tras de ti hasta que logré conquistarte y hacerte para siempre mía. Te amo, mi vida."></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose">✕</button>
+      <img id="modalImg" src="" alt="Recuerdo">
+      <div class="modal-dedication">
+        <p id="modalText"></p>
+        <span id="modalFecha"></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   1) DECORACION FLOTANTE (corazones / flores sutiles)
+   ========================================================= */
+const decorLayer = document.getElementById('decorLayer');
+const decorSymbols = ['♥','❀','✿','♡','❁'];
+for(let i = 0; i < 20; i++){
+  const el = document.createElement('div');
+  el.className = 'decor';
+  el.textContent = decorSymbols[Math.floor(Math.random() * decorSymbols.length)];
+  el.style.left = Math.random() * 100 + 'vw';
+  el.style.fontSize = (10 + Math.random() * 16) + 'px';
+  const duration = 12 + Math.random() * 12;
+  el.style.animationDuration = duration + 's';
+  el.style.animationDelay = (Math.random() * duration) + 's';
+  decorLayer.appendChild(el);
+}
+
+/* =========================================================
+   2) DISPERSION DE PARTICULAS (base tal cual la lógica original)
+   ========================================================= */
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+const imageSrc = 'image_0.png'; // Asegúrate de que este archivo esté junto al HTML
+
+// Configuración de las partículas
+const PARTICLE_GAP = 4;        // Espacio entre partículas
+const PARTICLE_SIZE = 4;       // Tamaño de cada partícula cuadrada
+const DISPERSION_FORCE = 4;    // Qué tan lejos explotan
+const RETURN_SPEED = 0.04;     // Qué tan rápido regresan
+
+let particlesArray = [];
+let animationFrameId;
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.baseX = x;
+    this.baseY = y;
+    this.color = color;
+    this.vx = 0;
+    this.vy = 0;
+    this.density = (Math.random() * 30) + 1;
+    this.size = PARTICLE_SIZE * (Math.random() * 0.5 + 0.7);
+  }
+
+  draw(){
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.size, this.size);
+  }
+
+  update(){
+    let dx = mouse.x - this.x;
+    let dy = mouse.y - this.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
+    let forceDirectionX = dx / distance;
+    let forceDirectionY = dy / distance;
+
+    let maxDistance = 100;
+    let force = (maxDistance - distance) / maxDistance;
+    if (force < 0) force = 0;
+
+    if (mouse.active && distance < maxDistance) {
+      this.vx -= forceDirectionX * force * DISPERSION_FORCE * this.density;
+      this.vy -= forceDirectionY * force * DISPERSION_FORCE * this.density;
+    } else {
+      this.x += (this.baseX - this.x) * RETURN_SPEED;
+      this.y += (this.baseY - this.y) * RETURN_SPEED;
+    }
+
+    this.vx *= 0.95;
+    this.vy *= 0.95;
+
+    this.x += this.vx;
+    this.y += this.vy;
+  }
+}
+
+const mouse = { x: null, y: null, active: false };
+
+canvas.addEventListener('mousemove', (event) => {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = event.clientX - rect.left;
+  mouse.y = event.clientY - rect.top;
+  mouse.active = true;
+});
+
+canvas.addEventListener('mouseleave', () => {
+  mouse.active = false;
+  mouse.x = undefined;
+  mouse.y = undefined;
+});
+
+canvas.addEventListener('mousedown', () => { mouse.active = true; });
+canvas.addEventListener('mouseup', () => { mouse.active = true; });
+
+// Soporte táctil básico para dispositivos móviles
+canvas.addEventListener('touchmove', (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const touch = event.touches[0];
+  mouse.x = touch.clientX - rect.left;
+  mouse.y = touch.clientY - rect.top;
+  mouse.active = true;
+}, { passive: true });
+
+canvas.addEventListener('touchend', () => {
+  mouse.active = false;
+  mouse.x = undefined;
+  mouse.y = undefined;
+});
+
+const img = new Image();
+img.src = imageSrc;
+
+img.onload = function(){
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particlesArray = [];
+  for (let y = 0; y < pixels.height; y += PARTICLE_GAP) {
+    for (let x = 0; x < pixels.width; x += PARTICLE_GAP) {
+      const index = (y * pixels.width + x) * 4;
+      const red = pixels.data[index];
+      const green = pixels.data[index + 1];
+      const blue = pixels.data[index + 2];
+      const alpha = pixels.data[index + 3];
+
+      if (alpha > 128) {
+        const color = `rgb(${red}, ${green}, ${blue})`;
+        particlesArray.push(new Particle(x, y, color));
+      }
+    }
+  }
+
+  animate();
+  finishLoading();
+};
+
+img.onerror = function(){
+  console.warn("No se pudo cargar 'image_0.png'. Verifica que el archivo esté junto a este HTML.");
+  finishLoading();
+};
+
+function animate(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < particlesArray.length; i++) {
+    particlesArray[i].update();
+    particlesArray[i].draw();
+  }
+  animationFrameId = requestAnimationFrame(animate);
+}
+
+function finishLoading(){
+  const loader = document.getElementById('loader');
+  loader.classList.add('hide');
+  setTimeout(() => { loader.style.display = 'none'; }, 900);
+}
+
+/* =========================================================
+   3) CONTADOR DE TIEMPO EN VIVO
+   ========================================================= */
+const START_DATE = new Date(2025, 10, 18, 0, 0, 0); // 18 de noviembre de 2025
+
+function pad(n){ return n.toString().padStart(2, '0'); }
+
+function updateCounter(){
+  const now = new Date();
+  let diff = now - START_DATE;
+  if (diff < 0) diff = 0;
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  document.getElementById('tDays').textContent = pad(days);
+  document.getElementById('tHours').textContent = pad(hours);
+  document.getElementById('tMinutes').textContent = pad(minutes);
+  document.getElementById('tSeconds').textContent = pad(seconds);
+}
+updateCounter();
+setInterval(updateCounter, 1000);
+
+/* =========================================================
+   4) CARTA DE AMOR - MAQUINA DE ESCRIBIR
+   ========================================================= */
+const letterMessage = "Katerin, me enteré tarde de que existía el Día de la Novia y me sentí mal por no haberte dado nada en su momento... pero la verdad es que cualquier día es perfecto para recordarte cuánto te amo. No necesito una fecha oficial para celebrarte, porque tú eres mi vida entera todos los días. Gracias por tu paciencia, por tu risa y por hacer mi mundo tan bonito. Te amo hoy, siempre y por cada día que no te di un detalle.";
+const letterEl = document.getElementById('letterText');
+let charIndex = 0;
+
+function typeLetter(){
+  if (charIndex <= letterMessage.length) {
+    letterEl.innerHTML = letterMessage.substring(0, charIndex) + '<span class="cursor"></span>';
+    charIndex++;
+    setTimeout(typeLetter, 42);
+  }
+}
+setTimeout(typeLetter, 1200);
+
+/* =========================================================
+   5) REPRODUCTOR DE MUSICA
+   ========================================================= */
+const musicBtn = document.getElementById('musicBtn');
+const bgMusic = document.getElementById('bgMusic');
+const iconPlay = document.getElementById('musicIconPlay');
+const iconPause = document.getElementById('musicIconPause');
+let isPlaying = false;
+
+musicBtn.addEventListener('click', () => {
+  if (!isPlaying) {
+    bgMusic.play().catch(() => {
+      console.warn("No se pudo reproducir el audio. Verifica que exista el archivo 'musica.mp3' junto a este HTML.");
+    });
+    isPlaying = true;
+    musicBtn.classList.add('playing');
+    iconPlay.style.display = 'none';
+    iconPause.style.display = 'block';
+  } else {
+    bgMusic.pause();
+    isPlaying = false;
+    musicBtn.classList.remove('playing');
+    iconPlay.style.display = 'block';
+    iconPause.style.display = 'none';
+  }
+});
+
+/* =========================================================
+   6) BURBUJAS DE FOTOS + MODAL CON DEDICATORIA
+   ========================================================= */
+document.querySelectorAll('.photo-bubble').forEach(bubble => {
+  const src = bubble.getAttribute('data-full');
+  const testImg = new Image();
+  testImg.onload = () => { bubble.style.backgroundImage = `url('${src}')`; };
+  testImg.onerror = () => { bubble.textContent = '💜'; }; // si la imagen local aún no existe
+  testImg.src = src;
+
+  bubble.addEventListener('click', () => {
+    modalImg.src = src;
+    modalText.textContent = bubble.getAttribute('data-dedication');
+    modalFecha.textContent = bubble.getAttribute('data-fecha');
+    modalOverlay.classList.add('open');
+  });
+});
+
+const modalOverlay = document.getElementById('modalOverlay');
+const modalImg = document.getElementById('modalImg');
+const modalText = document.getElementById('modalText');
+const modalFecha = document.getElementById('modalFecha');
+const modalClose = document.getElementById('modalClose');
+
+function closeModal(){ modalOverlay.classList.remove('open'); }
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+
+</body>
+</html>
