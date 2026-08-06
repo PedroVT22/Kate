@@ -5,6 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Para Katerin 💜</title>
 <style>
+  /* Estilo base para la transición suave de la carta */
+.love-letter {
+  transition: all 0.4s ease-in-out;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Estado cuando está recogida (contraída) */
+.love-letter.collapsed {
+  max-height: 45px !important; /* Ajusta esto si quieres que se vea un poco más o menos */
+  opacity: 0.45;
+}
+
+/* Opcional: un pequeño aviso visual para que sepa que se puede minimizar */
+.love-letter.collapsed::after {
+  content: " (Haz clic para leer 💌)";
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
   :root{
     --bg-deep:#0a0413;
     --bg-mid:#170a29;
@@ -439,6 +458,14 @@
   </div>
 
 <script>
+  // Función para contraer o expandir la cartita de amor
+  const loveLetter = document.querySelector('.love-letter');
+  if (loveLetter) {
+    loveLetter.addEventListener('click', () => {
+      loveLetter.classList.toggle('collapsed');
+    });
+  }
+
 /* =========================================================
    1) DECORACION FLOTANTE (corazones / flores sutiles)
    ========================================================= */
