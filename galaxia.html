@@ -2,28 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Para Katerin 💜</title>
 <style>
-  /* Estilo base para la transición suave de la carta */
-.love-letter {
-  transition: all 0.4s ease-in-out;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-/* Estado cuando está recogida (contraída) */
-.love-letter.collapsed {
-  max-height: 45px !important; /* Ajusta esto si quieres que se vea un poco más o menos */
-  opacity: 0.45;
-}
-
-/* Opcional: un pequeño aviso visual para que sepa que se puede minimizar */
-.love-letter.collapsed::after {
-  content: " (Haz clic para leer 💌)";
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
   :root{
     --bg-deep:#0a0413;
     --bg-mid:#170a29;
@@ -36,17 +17,25 @@
     --text-soft:#f3e8ff;
   }
 
-  *{margin:0;padding:0;box-sizing:border-box;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
   html,body{
     height:100%;
     width:100%;
     font-family:'Segoe UI', Arial, sans-serif;
-    overflow:hidden;
     color:var(--text-soft);
+    /* FIX: bloquea scroll/bounce de la pagina en movil (evita que "todo se mueva") */
+    overflow:hidden;
+    overscroll-behavior:none;
+    position:fixed;
+    inset:0;
   }
 
   body{
+    /* FIX: 100dvh se ajusta a la altura real visible en movil (sin la barra del navegador) */
+    height:100vh;
+    height:100dvh;
+    width:100vw;
     position:relative;
     background:
       radial-gradient(circle at 15% 15%, rgba(168,85,247,0.28), transparent 42%),
@@ -56,6 +45,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    overflow:hidden;
   }
 
   /* ---------- Destellos / luces suaves de fondo ---------- */
@@ -104,6 +94,8 @@
   .canvas-frame{
     position:relative;
     z-index:2;
+    max-width:100%;
+    max-height:100%;
     border-radius:22px;
     padding:14px;
     background:rgba(24,10,41,0.35);
@@ -115,10 +107,12 @@
   #particleCanvas{
     display:block;
     cursor:pointer;
-    max-width:82vw;
-    max-height:72vh;
+    max-width:78vw;
+    max-height:64vh;
     object-fit:contain;
     border-radius:14px;
+    /* FIX CLAVE: evita que el navegador haga scroll/zoom de la pagina al arrastrar el dedo sobre el canvas */
+    touch-action:none;
   }
 
   /* ---------- Loader ---------- */
@@ -153,7 +147,7 @@
   /* ---------- Contador de tiempo ---------- */
   .counter-panel{
     position:fixed;
-    top:18px;
+    top:14px;
     left:50%;
     transform:translateX(-50%);
     z-index:10;
@@ -167,6 +161,7 @@
     border:1px solid rgba(216,170,255,0.25);
     box-shadow:0 0 30px rgba(168,85,247,0.2);
     text-align:center;
+    max-width:94vw;
   }
   .counter-title{
     position:absolute;
@@ -185,7 +180,7 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    min-width:44px;
+    min-width:40px;
   }
   .time-value{
     font-size:1.25rem;
@@ -207,32 +202,48 @@
   }
 
   /* ---------- Carta de amor / typewriter ---------- */
+  /* FIX: se mantiene SIEMPRE position:fixed (nunca se convierte en hijo del flex del body).
+     Antes, en movil perdia el fixed y competia por espacio con el canvas -> el texto se
+     aplastaba en una columna de 1 caracter de ancho pegada al borde derecho. */
   .love-letter{
     position:fixed;
-    bottom:24px;
-    left:24px;
+    bottom:20px;
+    left:20px;
     z-index:10;
-    width:min(370px, 78vw);
-    padding:18px 20px;
+    width:min(370px, 62vw);
+    max-height:60vh;
+    overflow-y:auto;
+    padding:16px 18px;
     border-radius:18px;
-    background:rgba(24,10,41,0.5);
+    background:rgba(24,10,41,0.55);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
     border:1px solid rgba(216,170,255,0.22);
     box-shadow:0 0 30px rgba(168,85,247,0.18);
+    transition:all 0.4s ease-in-out;
+    cursor:pointer;
+  }
+  .love-letter.collapsed{
+    max-height:42px;
+    opacity:.5;
+    overflow:hidden;
+  }
+  .love-letter.collapsed::after{
+    content:" (Toca para leer 💌)";
+    font-size:.72rem;
+    opacity:.8;
   }
   .love-letter h3{
-    font-size:.76rem;
+    font-size:.74rem;
     color:var(--neon);
     letter-spacing:.5px;
     margin-bottom:8px;
     text-transform:uppercase;
   }
   .love-letter p{
-    font-size:.9rem;
-    line-height:1.55;
+    font-size:.86rem;
+    line-height:1.5;
     color:var(--text-soft);
-    min-height:110px;
   }
   .cursor{
     display:inline-block;
@@ -248,11 +259,11 @@
   /* ---------- Reproductor de música ---------- */
   .music-btn{
     position:fixed;
-    bottom:28px;
-    right:28px;
+    bottom:22px;
+    right:20px;
     z-index:12;
-    width:64px;
-    height:64px;
+    width:60px;
+    height:60px;
     border-radius:50%;
     border:none;
     cursor:pointer;
@@ -262,9 +273,10 @@
     justify-content:center;
     box-shadow:0 0 20px rgba(217,70,239,0.4);
     transition:transform .2s ease;
+    flex-shrink:0;
   }
   .music-btn:hover{ transform:scale(1.08); }
-  .music-btn svg{ width:26px; height:26px; fill:#fff; }
+  .music-btn svg{ width:24px; height:24px; fill:#fff; }
   .music-btn.playing{ animation:pulseNeon 1.4s ease-in-out infinite; }
   @keyframes pulseNeon{
     0%,100%{ box-shadow:0 0 16px rgba(217,70,239,0.4), 0 0 0 0 rgba(217,70,239,0.5); }
@@ -272,11 +284,14 @@
   }
 
   /* ---------- Burbujas de fotos ---------- */
+  /* FIX: se posicionan con distancias FIJAS (px) desde las esquinas en vez de % puros,
+     asi el espacio libre bajo el contador es siempre el mismo sin importar el alto real
+     de pantalla (evita choques en landscape bajo). */
   .photo-bubble{
     position:fixed;
     z-index:8;
-    width:100px;
-    height:100px;
+    width:70px;
+    height:70px;
     border-radius:50%;
     background-size:cover;
     background-position:center;
@@ -289,7 +304,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:1.5rem;
+    font-size:1.4rem;
   }
   .photo-bubble:hover{
     transform:scale(1.12);
@@ -297,12 +312,12 @@
   }
   @keyframes floatBubble{
     0%,100%{ transform:translateY(0px); }
-    50%{ transform:translateY(-16px); }
+    50%{ transform:translateY(-14px); }
   }
-  .bubble-1{ top:10%; left:4%; animation-duration:7s; }
-  .bubble-2{ top:15%; right:5%; animation-duration:8s; animation-delay:.4s; }
-  .bubble-3{ top:32%; left:4%; animation-duration:6.5s; animation-delay:.8s; }
-  .bubble-4{ top:50%; right:3%; animation-duration:7.5s; animation-delay:1.2s; width:100px; height:100px; }
+  .bubble-1{ top:110px; left:14px; animation-duration:7s; }
+  .bubble-2{ top:110px; right:14px; animation-duration:8s; animation-delay:.4s; }
+  .bubble-3{ bottom:110px; left:14px; animation-duration:6.5s; animation-delay:.8s; }
+  .bubble-4{ bottom:110px; right:14px; animation-duration:7.5s; animation-delay:1.2s; width:64px; height:64px; }
 
   /* ---------- Modal de foto con dedicatoria ---------- */
   .modal-overlay{
@@ -323,11 +338,12 @@
   .modal-box{
     position:relative;
     width:min(420px, 90vw);
+    max-height:90vh;
+    overflow-y:auto;
     border-radius:22px;
-    overflow:hidden;
     border:1px solid rgba(216,170,255,0.3);
     box-shadow:0 0 50px rgba(168,85,247,0.4);
-    background:rgba(24,10,41,0.9);
+    background:rgba(24,10,41,0.95);
     transform:scale(.9);
     transition:transform .3s ease;
   }
@@ -335,15 +351,15 @@
   .modal-box img{
     display:block;
     width:100%;
-    max-height:52vh;
+    max-height:46vh;
     object-fit:cover;
   }
   .modal-dedication{
-    padding:18px 22px 22px;
+    padding:16px 20px 20px;
     text-align:center;
   }
   .modal-dedication p{
-    font-size:.95rem;
+    font-size:.9rem;
     font-style:italic;
     line-height:1.5;
     color:var(--lilac);
@@ -351,21 +367,23 @@
   .modal-dedication span{
     display:block;
     margin-top:8px;
-    font-size:.75rem;
+    font-size:.72rem;
     color:var(--neon);
     letter-spacing:.5px;
   }
   .modal-close{
-    position:absolute;
+    position:sticky;
+    float:right;
     top:10px;
     right:10px;
-    width:34px;
-    height:34px;
+    margin:10px 10px 0 0;
+    width:32px;
+    height:32px;
     border-radius:50%;
     border:none;
-    background:rgba(24,10,41,0.75);
+    background:rgba(24,10,41,0.85);
     color:var(--text-soft);
-    font-size:1.1rem;
+    font-size:1.05rem;
     cursor:pointer;
     display:flex;
     align-items:center;
@@ -376,16 +394,33 @@
   }
   .modal-close:hover{ transform:scale(1.1) rotate(90deg); }
 
-  /* ---------- Responsivo ---------- */
+  /* ---------- Responsivo: pantallas angostas (portrait de celular) ---------- */
   @media (max-width:640px){
-    .counter-panel{ gap:6px; padding:12px 14px; }
-    .time-value{ font-size:1rem; }
-    .time-label{ font-size:.5rem; }
-    .love-letter{ position: relative !important; left: auto !important; bottom: auto !important; width: 92% !important; margin: 15px auto !important; max-height: none !important; }
-    .music-btn{ width:54px; height:54px; bottom:20px; right:16px; }
-    .photo-bubble{ width:50px; height:50px; }
+    .counter-panel{ gap:5px; padding:10px 12px; top:10px; }
+    .time-block{ min-width:32px; }
+    .time-value{ font-size:.95rem; }
+    .time-label{ font-size:.48rem; }
+    .love-letter{ left:10px; bottom:88px; width:min(300px, 58vw); }
+    .music-btn{ width:52px; height:52px; bottom:18px; right:12px; }
+    .photo-bubble{ width:48px; height:48px; font-size:1.1rem; }
+    .bubble-1, .bubble-2{ top:92px; }
+    .bubble-3, .bubble-4{ bottom:92px; }
     .bubble-4{ display:none; }
-    #particleCanvas{ max-width:90vw; max-height:56vh; }
+    #particleCanvas{ max-width:84vw; max-height:50vh; }
+  }
+
+  /* ---------- Responsivo: pantallas bajas (landscape de celular) ---------- */
+  @media (max-height:500px){
+    .counter-panel{ padding:8px 12px; top:8px; }
+    .time-value{ font-size:.85rem; }
+    .time-label{ font-size:.44rem; }
+    .time-sep{ padding-bottom:10px; }
+    #particleCanvas{ max-height:42vh; max-width:46vw; }
+    .love-letter{ bottom:10px; max-height:40vh; padding:10px 14px; }
+    .photo-bubble{ width:42px; height:42px; font-size:1rem; }
+    .bubble-1, .bubble-2{ top:72px; }
+    .bubble-3, .bubble-4{ bottom:12px; }
+    .music-btn{ width:46px; height:46px; bottom:12px; right:10px; }
   }
 </style>
 </head>
@@ -423,7 +458,7 @@
   </div>
 
   <!-- Carta de amor -->
-  <div class="love-letter">
+  <div class="love-letter" id="loveLetter">
     <h3>Para Katerin</h3>
     <p id="letterText"><span class="cursor"></span></p>
   </div>
@@ -459,12 +494,10 @@
 
 <script>
   // Función para contraer o expandir la cartita de amor
-  const loveLetter = document.querySelector('.love-letter');
-  if (loveLetter) {
-    loveLetter.addEventListener('click', () => {
-      loveLetter.classList.toggle('collapsed');
-    });
-  }
+  const loveLetter = document.getElementById('loveLetter');
+  loveLetter.addEventListener('click', () => {
+    loveLetter.classList.toggle('collapsed');
+  });
 
 /* =========================================================
    1) DECORACION FLOTANTE (corazones / flores sutiles)
@@ -562,14 +595,25 @@ canvas.addEventListener('mouseleave', () => {
 canvas.addEventListener('mousedown', () => { mouse.active = true; });
 canvas.addEventListener('mouseup', () => { mouse.active = true; });
 
-// Soporte táctil básico para dispositivos móviles
-canvas.addEventListener('touchmove', (event) => {
+// FIX: soporte táctil con preventDefault + touch-action:none (CSS) para que
+// arrastrar el dedo sobre el canvas YA NO desplace/haga scroll de toda la página.
+canvas.addEventListener('touchstart', (event) => {
+  event.preventDefault();
   const rect = canvas.getBoundingClientRect();
   const touch = event.touches[0];
-  mouse.x = touch.clientX - rect.left;
-  mouse.y = touch.clientY - rect.top;
+  mouse.x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+  mouse.y = (touch.clientY - rect.top) * (canvas.height / rect.height);
   mouse.active = true;
-}, { passive: true });
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (event) => {
+  event.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = event.touches[0];
+  mouse.x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+  mouse.y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+  mouse.active = true;
+}, { passive: false });
 
 canvas.addEventListener('touchend', () => {
   mouse.active = false;
@@ -713,7 +757,7 @@ document.querySelectorAll('.photo-bubble').forEach(bubble => {
   bubble.addEventListener('click', () => {
     modalImg.src = src;
     modalText.textContent = bubble.getAttribute('data-dedication');
-    modalFecha.textContent = bubble.getAttribute('data-fecha');
+    modalFecha.textContent = bubble.getAttribute('data-fecha') || '';
     modalOverlay.classList.add('open');
   });
 });
